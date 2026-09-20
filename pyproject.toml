@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "attnc"
+version = "0.1.0"
+description = "A Python-embedded DSL and JIT compiler for fused attention variants"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Neha Mahesh"}]
+dependencies = ["numpy>=1.24"]
+
+[project.optional-dependencies]
+cuda = ["cupy-cuda12x>=13"]
+torch = ["torch>=2.5", "cupy-cuda12x>=13"]
+test = ["pytest>=8"]
+
+[project.scripts]
+attnc = "attnc.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
