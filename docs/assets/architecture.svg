@@ -1,0 +1,26 @@
+<svg width="1200" height="430" viewBox="0 0 1200 430" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="430"><stop stop-color="#090C17"/><stop offset="1" stop-color="#101426"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#536078"/></marker>
+  </defs>
+  <rect width="1200" height="430" rx="24" fill="url(#bg)"/>
+  <path d="M258 178H333M523 178H598M788 178H863" stroke="#536078" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="58" y="88" width="200" height="180" rx="14" fill="#111729" stroke="#2A334D"/>
+  <text x="82" y="121" fill="#42E8E0" font-family="monospace" font-size="12" font-weight="700">01 / FRONTENDS</text>
+  <rect x="82" y="146" width="152" height="39" rx="7" fill="#0A0E1A" stroke="#2A334D"/><text x="99" y="170" fill="#F2F5FB" font-family="monospace" font-size="12">combinator DSL</text>
+  <rect x="82" y="199" width="152" height="39" rx="7" fill="#0A0E1A" stroke="#2A334D"/><text x="99" y="223" fill="#F2F5FB" font-family="monospace" font-size="12">proxy tracer</text>
+  <rect x="333" y="88" width="190" height="180" rx="14" fill="#111729" stroke="#2A334D"/>
+  <text x="357" y="121" fill="#A78BFA" font-family="monospace" font-size="12" font-weight="700">02 / ATTENTION IR</text>
+  <text x="357" y="159" fill="#C9D0E0" font-family="monospace" font-size="11">mask predicate</text><text x="357" y="187" fill="#C9D0E0" font-family="monospace" font-size="11">score modifier</text><text x="357" y="215" fill="#C9D0E0" font-family="monospace" font-size="11">layout metadata</text><text x="357" y="243" fill="#6E7893" font-family="monospace" font-size="10">10–15 primitive ops</text>
+  <rect x="598" y="58" width="190" height="240" rx="14" fill="#111729" stroke="#42E8E0" stroke-opacity=".45"/>
+  <text x="622" y="91" fill="#42E8E0" font-family="monospace" font-size="12" font-weight="700">03 / PASSES</text>
+  <text x="622" y="130" fill="#F2F5FB" font-family="monospace" font-size="11">constant fold</text><text x="622" y="158" fill="#F2F5FB" font-family="monospace" font-size="11">boolean simplify</text><text x="622" y="186" fill="#F2F5FB" font-family="monospace" font-size="11">infer bounds</text><text x="622" y="214" fill="#F2F5FB" font-family="monospace" font-size="11">classify tiles</text>
+  <rect x="622" y="239" width="142" height="34" rx="6" fill="#42E8E0" fill-opacity=".08"/><text x="642" y="260" fill="#42E8E0" font-family="monospace" font-size="10">skip · fast · pred</text>
+  <rect x="863" y="88" width="279" height="180" rx="14" fill="#111729" stroke="#2A334D"/>
+  <text x="887" y="121" fill="#FFB86B" font-family="monospace" font-size="12" font-weight="700">04 / CUDA BACKEND</text>
+  <text x="887" y="159" fill="#C9D0E0" font-family="monospace" font-size="11">online-softmax skeleton</text><text x="887" y="187" fill="#C9D0E0" font-family="monospace" font-size="11">NVRTC JIT + PTX dump</text><text x="887" y="215" fill="#C9D0E0" font-family="monospace" font-size="11">content-addressed cache</text><text x="887" y="243" fill="#70F0A9" font-family="monospace" font-size="10">one fused forward kernel</text>
+  <path d="M428 268V350H866" stroke="#536078" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="866" y="326" width="276" height="49" rx="9" fill="#0D1B17" stroke="#70F0A9" stroke-opacity=".4"/><text x="890" y="356" fill="#70F0A9" font-family="monospace" font-size="11" font-weight="700">NumPy oracle · differential fuzzing</text>
+  <circle cx="1094" cy="55" r="4" fill="#42E8E0" filter="url(#glow)"/><text x="58" y="360" fill="#65708B" font-family="monospace" font-size="11">same semantics, two execution paths</text>
+</svg>
