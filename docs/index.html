@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b14">
+  <meta name="description" content="Compose an attention variant and inspect the IR, tile plan, and fused CUDA emitted by attnc.">
+  <title>attnc — attention compiler playground</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <header class="nav shell">
+    <a class="brand" href="#top"><span class="brand-mark">a/</span>attnc</a>
+    <div class="nav-links">
+      <a href="#playground">Playground</a>
+      <a href="#pipeline">Pipeline</a>
+      <a class="github" href="https://github.com/mneha05/attnc">GitHub ↗</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero shell">
+      <div class="eyebrow"><span></span> Python DSL → optimized IR → fused CUDA</div>
+      <h1>Attention variants,<br><em>compiled—not hand-written.</em></h1>
+      <p class="lede">Compose causal masks, sliding windows, GQA, softcaps, and ALiBi. <strong>attnc</strong> lowers the composition into one kernel and proves its semantics against a NumPy oracle.</p>
+      <div class="hero-actions">
+        <a class="button primary" href="#playground">Open compiler playground <span>↓</span></a>
+        <a class="button secondary" href="https://github.com/mneha05/attnc">Read the source <span>↗</span></a>
+      </div>
+      <div class="proof-strip" aria-label="Project facts">
+        <div><b>160</b><span>differential cases</span></div>
+        <div><b>2</b><span>Python frontends</span></div>
+        <div><b>3</b><span>tile states</span></div>
+        <div><b>1</b><span>fused forward kernel</span></div>
+      </div>
+    </section>
+
+    <section id="playground" class="playground shell">
+      <div class="section-kicker">01 / LIVE EXPLORER</div>
+      <div class="section-heading">
+        <h2>Forge a kernel.</h2>
+        <p>This browser demo mirrors attnc's lowering rules. Flip a feature and inspect the compiler artifacts change together.</p>
+      </div>
+
+      <div class="workbench">
+        <aside class="controls panel">
+          <div class="panel-bar"><span class="dot cyan"></span>VARIANT SPEC</div>
+          <label class="control-row"><span><b>Causal</b><small>mask future keys</small></span><input id="causal" type="checkbox" checked><i></i></label>
+          <label class="control-row"><span><b>Sliding window</b><small>bounded KV history</small></span><input id="window" type="checkbox" checked><i></i></label>
+          <div class="range-wrap" id="window-wrap">
+            <div><span>window size</span><output id="window-value">4096</output></div>
+            <input id="window-size" type="range" min="128" max="8192" step="128" value="4096">
+          </div>
+          <label class="control-row"><span><b>GQA</b><small>8 query → 2 KV heads</small></span><input id="gqa" type="checkbox" checked><i></i></label>
+          <label class="control-row"><span><b>Logit softcap</b><small>cap · tanh(score / cap)</small></span><input id="softcap" type="checkbox" checked><i></i></label>
+          <label class="control-row"><span><b>ALiBi</b><small>head-specific position bias</small></span><input id="alibi" type="checkbox"><i></i></label>
+          <div class="select-row">
+            <label>HEAD DIM<select id="head-dim"><option>64</option><option selected>128</option><option>256</option></select></label>
+            <label>ARCH<select id="arch"><option>sm_75</option><option>sm_80</option><option selected>sm_121</option></select></label>
+          </div>
+          <button id="compile-button" class="compile-button"><span>▶</span> COMPILE VARIANT</button>
+          <div class="compile-status"><i></i><span id="status-text">cache hit · 4.8 ms</span></div>
+        </aside>
+
+        <div class="artifact panel">
+          <div class="tabs" role="tablist">
+            <button class="tab active" data-tab="dsl">PYTHON DSL</button>
+            <button class="tab" data-tab="ir">OPTIMIZED IR</button>
+            <button class="tab" data-tab="cuda">CUDA</button>
+          </div>
+          <pre id="dsl" class="code active" aria-label="Generated Python DSL"></pre>
+          <pre id="ir" class="code" aria-label="Generated intermediate representation"></pre>
+          <pre id="cuda" class="code" aria-label="Generated CUDA code"></pre>
+          <button id="copy" class="copy">COPY</button>
+        </div>
+
+        <div class="tiles panel">
+          <div class="panel-bar"><span class="dot purple"></span>STATIC TILE PLAN</div>
+          <div class="tile-meta"><span>query tiles ↓</span><span>KV tiles →</span></div>
+          <div id="tile-grid" class="tile-grid" aria-label="Attention mask tile classification"></div>
+          <div class="legend"><span><i class="full"></i>fast path</span><span><i class="partial"></i>predicated</span><span><i class="masked"></i>skipped</span></div>
+          <p id="tile-caption">Causal + window bounds become a closed-form key interval. Fully masked tiles issue no memory traffic.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="pipeline shell">
+      <div class="section-kicker">02 / COMPILER PIPELINE</div>
+      <div class="section-heading"><h2>Small compiler. Real compiler.</h2><p>Both frontends converge on one IR, then pass through conservative optimizations before runtime dispatch.</p></div>
+      <div class="pipeline-grid">
+        <article><span>01</span><b>Capture</b><p>Immutable combinators or proxy-object tracing record score and mask semantics.</p><code>score - slopes[h] * Δ</code></article>
+        <article><span>02</span><b>Optimize</b><p>Constant folding, boolean simplification, bound inference, and dead-branch removal.</p><code>causal ∧ window(4096)</code></article>
+        <article><span>03</span><b>Classify</b><p>Every key tile becomes fully masked, fully unmasked, or partial.</p><code>skip · fast · predicate</code></article>
+        <article><span>04</span><b>Emit + JIT</b><p>Splice expressions into an online-softmax skeleton, compile with NVRTC, and cache.</p><code>hash(IR, shape, arch)</code></article>
+      </div>
+    </section>
+
+    <section class="correctness shell">
+      <div class="correct-card">
+        <div><span class="check">✓</span><div><b>Correctness is a first-class backend</b><p>The same IR runs through an independent NumPy interpreter, enabling differential fuzzing across variants, shapes, and seeds.</p></div></div>
+        <div class="test-counter"><strong>160 / 160</strong><span>CPU differential cases passing</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell"><span>Built by Neha Mahesh</span><span>Forward inference · contiguous KV · Linux CUDA</span><a href="https://github.com/mneha05/attnc">View repository ↗</a></footer>
+  <script src="app.js"></script>
+</body>
+</html>
